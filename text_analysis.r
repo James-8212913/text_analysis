@@ -23,6 +23,7 @@ library(stopwords)
 library(topicmodels)
 library(textclean)
 library(tm)
+library(SnowballC)
 
 #------------------------------------------------------------------------------#
 # Load Data                                                                  ####
@@ -68,8 +69,7 @@ text_imp <- text_df %>%
    group_by(doc_id) %>% 
    bind_tf_idf(word, doc_id,n) %>% 
    arrange(desc(tf_idf)) 
-   group_by(doc_id)
-
+   
 text_imp
 
 text_df %>% 
@@ -80,9 +80,8 @@ text_df %>%
 
 ## Continuing on to determine relationships between words in an n-gram format.
 
-
 text_tidy_1 <- text_df %>% 
-   unnest_tokens(bigram, text, token = "ngrams", n = 3) %>% 
+   unnest_tokens(bigram, text, token = "ngrams", n = 2) %>% 
    group_by(doc_id) %>% 
    count(bigram, sort = TRUE) 
 
@@ -91,15 +90,14 @@ text_tidy_1
 # Separate the bigrams before removing the stop words to remove trivial collections of words
 
 text_tidy_1_s <- text_tidy_1 %>% 
-   separate(bigram, c("word1", "word2", "word3"), sep = " ")
+   separate(bigram, c("word1", "word2"), sep = " ")
 
 text_tidy_1_s
 
 plots_list_1 <- text_tidy_1_s %>% 
    filter(!word1 %in% stop_words$word) %>% 
    filter(!word2 %in% stop_words$word) %>% 
-   filter(!word3 %in% stop_words$word) %>% 
-   unite(bigram, word1, word2, word3, sep = " ") %>% 
+   unite(bigram, word1, word2, sep = " ") %>% 
    group_by(doc_id) %>% 
    filter(n > 2) %>% 
    group_split() %>% 
@@ -116,22 +114,33 @@ plots_list_1
 
 # First step is to cast the tidy data into a document term matrix - this is the format that is used when using the LDA unsupervised techniques
 
-text_dtm <- text_df %>% 
+stop_words
+mystopwords <- c('_t','t_', 't')
+stop_words <- stop_words %>% 
+   add_row(word = mystopwords)
+stop_words
+
+text_dtm <- text_df %>%  
+   mutate(text = str_remove_all(text, "[:digit:]")) %>% 
+   mutate(text = str_trim(text, side = "both")) %>% 
+   mutate(text = str_to_lower(text)) %>% 
+   mutate(text = str_remove_all(text, "[:punct:]")) %>% 
    unnest_tokens(word, text) %>% 
    anti_join(stop_words) %>% 
-   count(doc_id, word) %>% 
-   cast_dtm(doc_id, word, n)
+   mutate(stem = wordStem(word)) %>% 
+   count(doc_id, stem) %>% 
+   cast_dtm(doc_id, stem, n)
 
 text_dtm
 
-text_topics <- LDA(text_dtm, k = 5, control = list(seed = 9864))
+text_topics <- LDA(text_dtm, k = 6, control = list(seed = 9864))
 
 tidy_t_t_b <- tidy(text_topics, matrix = "beta")
 
 
-text_top_10 <- tidy_t_t %>% 
+text_top_10 <- tidy_t_t_b %>% 
    group_by(topic) %>% 
-   slice_max(beta, n = 10) %>% 
+   slice_max(beta, n = 15) %>% 
    ungroup() %>% 
    arrange(topic, -beta)
 
@@ -142,12 +151,25 @@ text_top_10 %>%
    ggplot(aes(beta, term, fill = factor(topic))) +
    geom_col(show.legend = FALSE) +
    facet_wrap(~ topic, scales = "free") +
-   scale_y_reordered()
+   scale_y_reordered() 
 
 tidy_t_t_g <- tidy(text_topics, matrix = "gamma")
 
-tidy_t_t_g %>% 
-   arrange(desc(gamma))
+text_top_10_g <- tidy_t_t_g %>% 
+   group_by(topic) %>% 
+   slice_max(gamma, n = 20) %>% 
+   ungroup() %>% 
+   arrange(topic, -gamma) 
+
+text_top_10_g
+
+text_top_10_g %>% 
+   ggplot(aes(factor(topic), gamma)) +
+   geom_boxplot() +
+   facet_wrap(~ document) +
+   theme_light() 
+
+
 
 
 
