@@ -27,13 +27,15 @@ library(SnowballC)
 library(cowplot)
 library(wordcloud2)
 library(knitr)
+library(igraph)
+library(ggraph)
 
 #------------------------------------------------------------------------------#
 # Load Data                                                                  ####
 #------------------------------------------------------------------------------#
 
-file_list <- list.files(path = "." , recursive = TRUE,
-                        pattern = ".*.txt",
+file_list <- list.files(path = "data" , recursive = TRUE,
+                        pattern = "*.txt",
                         full.names = TRUE) 
 
 file_list
@@ -54,11 +56,13 @@ text_df_suummary <- text_df %>%
 summary(text_df_suummary)
 
 ## The text df was broken into tokens in an effort to get a better understanding of how many different words there were and what the counts of each of the words were. Stop_words have been removed as part of the analysis. The filter was set to 8 as part of trail and error - it isn't suitable for all files but is a good start point to sharpen the focus and get a feel for what is in each file. 
+
+
+
 mystopwords <- as_tibble_col(c("t_", "_t", "docs", "figure", "min"), column_name = 'word')
 mystopwords
 
 stop_words <- get_stopwords(language = 'en', source = "smart")
-
 stop_words <- bind_rows(stop_words, mystopwords)
 stop_words
 
@@ -84,12 +88,16 @@ wc_p
 
 ## Generate a table with the top 5 terms for each of the files for an annex in the finel report. 
 
-table1 <- text_tidy_s %>% 
+tables <- text_tidy_s %>% 
    group_by(doc_id) %>% 
    slice_max(order_by = n, n = 5) %>% 
-   kable()
+   nest() %>% 
+   mutate(
+      tables = map2(data, doc_id,
+                    ~ kable(x = data)))
 
-table1
+## To view the top 5 words for each file 
+tables$tables
 
 ## Initial Look at the text in each file as individual words with stop words removed
 text_tidy <- text_tidy_s %>% filter(n >8)
@@ -113,7 +121,7 @@ plot_list1 <- text_tidy %>%
                        
 plot_list1 #inspect the DF that includes doc-id, data and the plots
 
-plot_list1$plot #Run this to view all plots in the viewing window
+plot_list1$plot[[1]] #Run this to view all plots in the viewing window
 
 ## Save the plots for future publication purposes 
 
@@ -140,6 +148,8 @@ text_imp %>%
 
 ggsave("zipfs.png", path = 'images')
 
+## Select any strange or different terms that may need to be added to the stop words as part of ongoing analysis. 
+
 text_df %>% 
    filter(str_detect(text, "_t")) %>% 
    select(text)
@@ -157,7 +167,7 @@ text_tidy_1 <- text_df %>%
    group_by(doc_id) %>% 
    count(bigram, sort = TRUE) 
 
-text_tidy_1
+text_tidy_1 
 
 # Plot Bigrams ----
 # Separate the bigrams before removing the stop words to remove trivial collections of words
@@ -165,7 +175,26 @@ text_tidy_1
 text_tidy_1_s <- text_tidy_1 %>% 
    separate(bigram, c("word1", "word2"), sep = " ")
 
-text_tidy_1_s
+network_1 <- text_tidy_1_s %>% filter(!word1 %in% stop_words$word) %>% 
+   filter(!word2 %in% stop_words$word) %>% 
+   filter(n > 5) %>% 
+   ungroup() %>% 
+   select(word1, word2, n) %>% 
+   graph_from_data_frame()
+
+network_1
+   
+set.seed(12457)
+
+network1_plot <- ggraph(network_1, layout = "fr") +
+   geom_edge_link() +
+   geom_node_point() +
+   geom_node_text(aes(label = name, vjust = 1, hjust = 1))
+
+network1_plot
+
+ggsave(filename = "network1_plot.png", path = "images")
+
 
 plots_list_1 <- text_tidy_1_s %>% 
    filter(!word1 %in% stop_words$word) %>% 
@@ -173,16 +202,21 @@ plots_list_1 <- text_tidy_1_s %>%
    unite(bigram, word1, word2, sep = " ") %>% 
    group_by(doc_id) %>% 
    filter(n > 2) %>% 
-   nest() 
+   nest() %>% 
    mutate(plots = map2(data, doc_id,
                    ~ggplot(data = .x, aes(n, reorder(bigram, -n)))+
-                              geom_col()) 
-          labs(y = NULL,
-               title = .$doc_id))
+                              geom_col(aes(fill = n)) +
+                      labs(y = NULL,
+                           x = "Number of Occurences",
+                           title = .y) +
+                      theme_light() +
+                      theme(legend.position = "none")))
 
-plots_list_1
+plots_list_1$plots[[1]]
 
-data = .x, aes(n, reorder(word, -n)
+## Save the Plots for future reference and publishing 
+
+map2(paste0('images/',plots_list_1$doc_id, "bi.png"), plots_list_1$plots, ggsave)
 
 ## Outcome - The text needs a little more tidying but the next step will be to see if we can model into the topics.
 
@@ -197,7 +231,7 @@ text_dtm <- text_df %>%
    mutate(text = str_remove_all(text, "[:punct:]")) %>% 
    unnest_tokens(word, text) %>% 
    anti_join(stop_words) %>% 
-   mutate(stem = wordStem(word)) %>% 
+   mutate(stem = wordStem(word)) %>%
    count(doc_id, stem) %>% 
    cast_dtm(doc_id, stem, n)
 
@@ -206,7 +240,6 @@ text_dtm
 text_topics <- LDA(text_dtm, k = 6, control = list(seed = 9864))
 
 tidy_t_t_b <- tidy(text_topics, matrix = "beta")
-
 
 text_top_10 <- tidy_t_t_b %>% 
    group_by(topic) %>% 
@@ -223,6 +256,8 @@ text_top_10 %>%
    facet_wrap(~ topic, scales = "free") +
    scale_y_reordered() 
 
+ggsave(filename = "top_10_terms_topic.png", path = "images")
+
 tidy_t_t_g <- tidy(text_topics, matrix = "gamma")
 
 text_top_10_g <- tidy_t_t_g %>% 
@@ -233,11 +268,31 @@ text_top_10_g <- tidy_t_t_g %>%
 
 text_top_10_g
 
-text_top_10_g %>% 
+class_facet <- text_top_10_g %>% 
    ggplot(aes(factor(topic), gamma)) +
    geom_boxplot() +
    facet_wrap(~ document) +
-   theme_light() 
+   theme_light() +
+   labs(title = "Classification of Documents into topics") +
+   xlab("Topic") +
+   ylab("Gamma")
+
+class_facet
+
+ggsave(filename = "topic_facet.png", path = "images")
+
+tables_1 <- text_top_10_g %>% 
+   group_by(topic) %>% 
+   arrange(desc(gamma)) %>% 
+   filter(gamma > .7) %>% 
+   nest() %>% 
+   mutate(
+      tables = map2(data, topic,
+                    ~ kable(x = data)))
+
+tables_1$tables
+
+
 
 
 

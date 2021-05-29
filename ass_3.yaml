@@ -1,0 +1,29 @@
+---
+title: Text Analysis
+version: 1.0.5
+author:
+- James Murray
+date: May '21
+subtitle: The case of the unnamed .txt files...
+keywords: [text analysis, topic modelling]
+subject: Text Analysis
+toc: True
+toc-own-page: True
+toc-depth: 3
+lof: True
+lot: True
+titlepage: True
+footnotes-pretty: True
+link-citations: True
+fancy_lists: True
+fenced_code_blocks: True
+fenced_code_attributes: True
+titlepage-background: images/cover.jpg
+titlepage-text-color: "000000"
+colorlinks: True
+citations: True
+biblio-title: References
+bibliography: text_modelling.bib
+nocite: |
+    @*
+---

@@ -1,0 +1,31 @@
+---
+title: A Visual Argument for a new Tax Paradigm in Australia
+date: May 2021
+author:
+- Yunsoek Oh - 10782946
+- Jun Chen - 13872421
+- James Murray - 13879046
+description: An exploration of gaps and opportunities in the Australian Tax System over time
+link:
+version: 0.5
+data:
+titlepage: True
+titlepage-background: plot/iu.jpg
+page-background-opacity: 0.7
+page-background-color: "ffffff"
+toc: True
+toc-own-page: True
+lot: True
+lof: True
+link_citations: True
+citations: True
+footnotes-pretty: True
+bibliography:
+    - Tax-Reform.bib
+    - YO.bib
+    - DVN_AT3_jun.bib
+nocite: |
+    @*
+abstract: |
+    20 years from the introduction of the GST, a new federal budget that is more focussed on soverign business, OECD intent to crack down on Base Erosion and Profit Shifting - the global, regional and local context is changing. The opportunity for the government to critically review some of the assumptions that underpin the existing system is significant. What made sense 20 years ago is now placing the government in a precarious position as it prepares to sure the tax base that has for so long underpinned the safety and prosperity that all Australians have enjoyed. The government of the day should consider the recommendations within as options as part of the larger environmental and geopolitical context. 
+---
