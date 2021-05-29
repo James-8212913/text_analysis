@@ -8,13 +8,9 @@ The situation isn't dire, there isn't any time pressure on and given that these 
 
 ### Data Mining Goals and Project Plan
 
-The Data has been given in a single folder named **Data**. There is no requirement to search for more data beyond this file. The broad plan is to conduct a text analysis on the files to determine some broad topics that these files can be grouped into.
+The Data has been given in a single folder named **Files**. There is no requirement to search for more data beyond this file. The broad plan is to conduct a text analysis on the files to determine some broad topics that these files can be grouped into. The data is a folder with 42 separate text files (.txt) in it.
 
-## Data Understanding
-
-The **Data** folder consisted of 42 separate text files (.txt).
-
-### Describe
+### Describe the Data
 
 The summary table below offers an initial indication of the numbers of words and sentences in each of the files.  
 
@@ -25,13 +21,14 @@ The summary table below offers an initial indication of the numbers of words and
 
 Table: Word and Sentence counts for the files[^e1f3]
 
+\newpage
 ### Exploratory Analysis
 
 Below is a *wordcloud* that highlights the most used terms across all of the files.
 
-![WordCloud highlighting most used terms across all files](images/wc_p.png){width=70%}
+![WordCloud highlighting most used terms across all files](images/wc_p.png){width=60%}
 
-In addition to the wordcloud a list most frequently occurring words for each file was developed, an example of the tables generated is below:
+In addition to the *wordcloud* a list most frequently occurring words for each file was developed, an example of the tables generated is below:
 
 Table: Most frequently occurring words in file 39
 
@@ -54,11 +51,11 @@ Table: Most Frequently occurring terms in file 29
 |bureaucratic | 27|
 |post         | 19|
 
-A table was generated for each file.
+A table was generated for each file which offers insight into the contents of the files.
 
 Another way to start to consider the importance of each word in the files is to use apply Zipf's law to the corpus of documents. Below is a broad list of the terms that are considered important to each of the files and the relative importance according to Zipf's Law. [^0432]
 
-![Top Terms according to Zipf's Law](images/zipfs.png){width=80%}
+![Top Terms according to Zipf's Law](images/zipfs.png){width=100%}
 
 This was done in addition to producing a graph for each of files that highlighted the most frequent terms in each file. Two examples are below.
 
@@ -66,37 +63,40 @@ This was done in addition to producing a graph for each of files that highlighte
 
 ![Term Frequency for file file 39](images/Doc39.txt.png){width=90%}
 
-In order to get a better understanding of the contents of the files the files were broken into bigrams and trigrams (N-grams). This offers a way to gain greater insight by understanding which words appear together or which words appear in the same document generally.[@mediaRelationshipsWordsNgrams] Example results for two of the files are below.
+In order to get a better understanding of the contents of the files the files were broken into N-grams or groupings of words that are used together in the documents. This offers a way to gain greater insight by understanding which words appear together or which words appear in the same document generally.[@RelationshipsWordsNgrams] Example results for two of the files are below.
 
 ![Bi-gram Frequency for file 01](images/Doc01.txtbi.png)
 
 ![Bi-gram Frequency for file 38](images/Doc38.txtbi.png)
 
-From visual analysis we can see that this is more informative but we still don't have a really good feel for how many different possible topics there are across all of the files or what reasonable groupings for the documents could be.
+From visual analysis we can see that this is more informative but we still don't have a really good feel for how many different possible topics there are across all of the files or what reasonable groupings for the documents could be. considering the terms closely it is evident that some more cleaning of the text corpus is required. This will be addressed as part of the steps before unsupervised modelling is conducted.
+
+\newpage
 
 The relationships across all of the documents were mapped visually in an effort to better understand groupings of the different terms across all of the files. This relationship diagram is below.
 
-![Bi-gram network relationship image across all files](images/network1_plot.png)
+![Bi-gram network relationship across all files](images/network1_plot.png)
 
 Based on this gross check we can see a few key terms that are starting to group together - this can assist in informing the number of topics as part of future modelling activities.
 
 The file preparation to this point has consisted of the removal of digits and a series of stopwords. Some extra *stop words* were added to the list based on initial analysis. Characters like '_t' were removed from the files.
 
+\newpage
 ## Modeling
 
 Prior to conducting unsupervised topic modelling using the *Latent Dirichlet Allocation* [^8d01] all punctuation was removed in addition to *stemming*[^56ac] of the Data. This comes with some risk as some of the sentiment can be lost as part of the process - it helps to reduce the feature space as part of larger data sets - it was done here to determine if there are any benefits in narrowing the topics.
 
 The results of the topics modelling are below.
 
-![Top 10 Terms by topic LDA modelling](images/top_10_terms_topic.png)
+![Top 10 Terms by topic following LDA modelling](images/top_10_terms_topic.png)
 
-The choice to make six topics as part of the process was after a period of trial and error - this appeared to offer the best grouping of the terms into different topics. There is still some overlap between the terms and the topics but it is likely this will be a product of the content in the files.
+The choice to make six topics as part of the process was after a series of trials - this number was assessed as offering the best balance between meaningful groups and the size of the groups being useful. There is still some overlap between the terms and the topics but it is likely this will be a product of the content in the files themselves.
 
-In order to assess how the model went at classifying the documents into different groups the facet chart below.
+In order to assess how the model went at classifying the documents into different groups the facet chart below was created. This offers a visual way to view which documents should be grouped into which topic and how confident we are of the grouping.
 
 ![Classification of Documents by Topic](images/topic_facet.png)
 
-It appears that of the 42 files only a couple of files couldn't be conclusively placed into a topic. These files are 15, 18 and 23. After reviewing these files there is some overlap across topics.
+It appears that of the 42 files only a couple of files couldn't be conclusively placed into a topic. These files are 15, 18 and 23. After reviewing these files there is some overlap across topics and the terms used in these files with other topics. File 15 should be grouped into topic 4, file 8 should be grouped into topic 5. File 23 was one of the harder to group. The model had it sitting in topic 5 but this doesn't seem suitable - this file will require further review before settling on a topic as it appears to span multiple topics equally and none of them conclusively. As per Figure 2 above we can see that the key terms in the document are *coal, seam, mines, mechanised* which tends to indicate a unique set of terms according to Zipf's law relative to other documents. 
 
 ## Evaluation
 
@@ -116,18 +116,14 @@ Future work opportunities could be to conduct sentiment analysis on our own revi
 
 # Annex A - Suggested File Groupings
 
-Table: Topic 1 contents and confidence levels
-
-Suggested folder name is: IBIS_MAP_CLUSTER
-
 |document  |     gamma|
 |:---------|---------:|
 |Doc19.txt | 0.9999504|
 |Doc42.txt | 0.9999456|
 
-Table: Topic 2 contents and confidence levels
+Table: Topic 1 contents and confidence levels
 
-Suggested folder name is: RISK_MANAGEMENT_STUPID
+Suggested folder name is: IBIS_MAP_CLUSTER
 
 |document  |     gamma|
 |:---------|---------:|
@@ -139,9 +135,9 @@ Suggested folder name is: RISK_MANAGEMENT_STUPID
 |Doc36.txt | 0.9997073|
 |Doc38.txt | 0.8971244|
 
-Table: Topic 3 contents and confidence levels
+Table: Topic 2 contents and confidence levels
 
-Suggested folder name is: PLOT_BOUNDARY_CORPUS
+Suggested folder name is: RISK_MANAGEMENT_STUPID
 
 |document  |     gamma|
 |:---------|---------:|
@@ -153,9 +149,9 @@ Suggested folder name is: PLOT_BOUNDARY_CORPUS
 |Doc27.txt | 0.9998268|
 |Doc05.txt | 0.9103705|
 
-Table: Topic 4 content and confidence levels
+Table: Topic 3 contents and confidence levels
 
-Suggested folder name is: PROJECT_MANAGEMENT_CHANGE
+Suggested folder name is: PLOT_BOUNDARY_CORPUS
 
 | document  |     gamma |
 |:--------- | ---------:|
@@ -165,9 +161,9 @@ Suggested folder name is: PROJECT_MANAGEMENT_CHANGE
 | Doc03.txt | 0.9996496 |
 | Doc31.txt | 0.9535174 |
 
-Table: Topic 5 contents and confidence levels
+Table: Topic 4 content and confidence levels
 
-Suggested folder name is: MONTE_CARLO_PROJECT
+Suggested folder name is: PROJECT_MANAGEMENT_CHANGE
 
 |document  |     gamma|
 |:---------|---------:|
@@ -181,9 +177,9 @@ Suggested folder name is: MONTE_CARLO_PROJECT
 |Doc12.txt | 0.8116897|
 |Doc20.txt | 0.7884268|
 
-Table: Topic 6 contents and confidence levels
+Table: Topic 5 contents and confidence levels
 
-Suggested folder name is: RISK_MODEL_PROJECT
+Suggested folder name is: MONTE_CARLO_PROJECT
 
 |document  |     gamma|
 |:---------|---------:|
@@ -197,6 +193,10 @@ Suggested folder name is: RISK_MODEL_PROJECT
 |Doc07.txt | 0.9996730|
 |Doc04.txt | 0.9993338|
 
+Table: Topic 6 contents and confidence levels
+
+Suggested folder name is: RISK_MODEL_PROJECT
+
 \newpage
 
 # References
@@ -205,6 +205,6 @@ Suggested folder name is: RISK_MODEL_PROJECT
 
 [^0432]: Zipf's is an imperical law stating that word frequency in documents is inversely proportional to work rank in descending order of occurrence. [@PDFZipfLaw]
 
-[^8d01]: LDA is one of the most common algorithms for topic modelling.[@mediaTopicModelingText]
+[^8d01]: LDA is one of the most common algorithms for topic modelling.[@TopicModelingText]
 
 [^56ac]: Stemming removes the different versions of the same word. [@silgeChapterStemmingSupervised]

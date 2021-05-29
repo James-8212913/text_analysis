@@ -99,7 +99,8 @@ tables <- text_tidy_s %>%
 ## To view the top 5 words for each file 
 tables$tables
 
-## Initial Look at the text in each file as individual words with stop words removed
+## Create a filtered tidy df that is filtered to the level for graphing withing the published environment. 
+
 text_tidy <- text_tidy_s %>% filter(n >8)
 
 text_tidy
@@ -136,7 +137,29 @@ text_imp <- text_df %>%
    group_by(doc_id) %>% 
    bind_tf_idf(word, doc_id,n) %>%
    slice_max(order_by = tf_idf, n = 5)
+
+view(text_imp)
+
+file_names <- text_imp %>% arrange(desc(tf_idf), doc_id) %>%  
+   nest() %>% 
+   mutate(
+      sug_file_name = map2(data, doc_id,
+                           select(word) %>% 
+                              str_flatten() %>% 
+                              str_remove_all("[:punct:]") %>% 
+                              str_glue() %>% 
+                              str_replace_all(" ", "_")))
    
+
+test <- file_names$data[[39]] %>% 
+   select(word) %>% 
+   str_flatten() %>% 
+   str_remove_all("[:punct:]") %>% 
+   str_glue() %>% 
+   str_replace_all(" ", "_")
+
+test
+
 text_imp %>% 
    ggplot(aes(x = tf_idf, y = doc_id)) +
    geom_text(aes(label = word, colour = doc_id),size = 3, check_overlap =TRUE) +
@@ -247,7 +270,7 @@ text_top_10 <- tidy_t_t_b %>%
    ungroup() %>% 
    arrange(topic, -beta)
 
-## Graph the terms in the documents
+# Visualise the LDA findings ----
 
 text_top_10 %>% 
    mutate(term = reorder_within(term, beta, topic)) %>% 
@@ -265,6 +288,7 @@ text_top_10_g <- tidy_t_t_g %>%
    slice_max(gamma, n = 20) %>% 
    ungroup() %>% 
    arrange(topic, -gamma) 
+
 
 text_top_10_g
 
