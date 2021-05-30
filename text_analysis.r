@@ -53,15 +53,19 @@ text_df_suummary <- text_df %>%
    mutate(length_sentences = str_count(text, boundary("sentence"))) %>% 
    mutate(length_paragraphs = str_count(text, boundary("line_break"))) %>% 
    arrange(desc(length_words)) 
+
+text_df_suummary
+
 summary(text_df_suummary)
 
 ## The text df was broken into tokens in an effort to get a better understanding of how many different words there were and what the counts of each of the words were. Stop_words have been removed as part of the analysis. The filter was set to 8 as part of trail and error - it isn't suitable for all files but is a good start point to sharpen the focus and get a feel for what is in each file. 
 
 
-
+## Handle stopwords by creating a list and adding words as they lose value as part of the analysis. 
 mystopwords <- as_tibble_col(c("t_", "_t", "docs", "figure", "min"), column_name = 'word')
 mystopwords
 
+## Combine stopwords added to the 'master' list of words
 stop_words <- get_stopwords(language = 'en', source = "smart")
 stop_words <- bind_rows(stop_words, mystopwords)
 stop_words
@@ -86,7 +90,7 @@ wc
 wc_p <- wordcloud2(data = wc)
 wc_p
 
-## Generate a table with the top 5 terms for each of the files for an annex in the finel report. 
+## Generate a table with the top 5 terms for each of the files for an annex in the final report. 
 
 tables <- text_tidy_s %>% 
    group_by(doc_id) %>% 
