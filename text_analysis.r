@@ -140,26 +140,6 @@ text_imp <- text_df %>%
 
 view(text_imp)
 
-file_names <- text_imp %>% arrange(desc(tf_idf), doc_id) %>%  
-   nest() %>% 
-   mutate(
-      sug_file_name = map2(data, doc_id,
-                           select(word) %>% 
-                              str_flatten() %>% 
-                              str_remove_all("[:punct:]") %>% 
-                              str_glue() %>% 
-                              str_replace_all(" ", "_")))
-   
-
-test <- file_names$data[[39]] %>% 
-   select(word) %>% 
-   str_flatten() %>% 
-   str_remove_all("[:punct:]") %>% 
-   str_glue() %>% 
-   str_replace_all(" ", "_")
-
-test
-
 text_imp %>% 
    ggplot(aes(x = tf_idf, y = doc_id)) +
    geom_text(aes(label = word, colour = doc_id),size = 3, check_overlap =TRUE) +
@@ -289,7 +269,6 @@ text_top_10_g <- tidy_t_t_g %>%
    ungroup() %>% 
    arrange(topic, -gamma) 
 
-
 text_top_10_g
 
 class_facet <- text_top_10_g %>% 
@@ -305,6 +284,8 @@ class_facet
 
 ggsave(filename = "topic_facet.png", path = "images")
 
+## This is to gather files into topics where the gamma is greater than .7. This offers a reasonable amount of confidence that the file is in the correct topic. 
+
 tables_1 <- text_top_10_g %>% 
    group_by(topic) %>% 
    arrange(desc(gamma)) %>% 
@@ -316,10 +297,27 @@ tables_1 <- text_top_10_g %>%
 
 tables_1$tables
 
+# Create Suggested file names to go in the topic folders ----
 
+file_names <- text_imp %>% arrange(desc(tf_idf), doc_id) %>%  
+   nest()
 
-
-
-
-
+file_names <- file_names %>% 
+   mutate(sug_name = map2(doc_id, data, ~ data %>%  
+                             str_flatten() %>% 
+                             str_remove_all("[:punct:]") %>% 
+                             str_remove_all("[:digit:]") %>% 
+                             str_match(" = c(.*) n ") %>% 
+                             str_replace_all(" ", "_"))) %>% 
+   select(doc_id, sug_name) %>% 
+   unnest() %>% 
+   filter(!grepl("=", sug_name)) %>% 
+   mutate(
+      file_name_sug = paste0(sug_name,"_", doc_id)
+   ) %>%  
+   select(file_name_sug) %>% 
+   arrange(doc_id) %>% 
+   kable()
+                             
+view(file_names)
 

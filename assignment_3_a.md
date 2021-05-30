@@ -96,7 +96,7 @@ In order to assess how the model went at classifying the documents into differen
 
 ![Classification of Documents by Topic](images/topic_facet.png)
 
-It appears that of the 42 files only a couple of files couldn't be conclusively placed into a topic. These files are 15, 18 and 23. After reviewing these files there is some overlap across topics and the terms used in these files with other topics. File 15 should be grouped into topic 4, file 8 should be grouped into topic 5. File 23 was one of the harder to group. The model had it sitting in topic 5 but this doesn't seem suitable - this file will require further review before settling on a topic as it appears to span multiple topics equally and none of them conclusively. As per Figure 2 above we can see that the key terms in the document are *coal, seam, mines, mechanised* which tends to indicate a unique set of terms according to Zipf's law relative to other documents. 
+It appears that of the 42 files only a couple of files couldn't be conclusively placed into a topic. These files are 15, 18 and 23. After reviewing these files there is some overlap across topics and the terms used in these files with other topics. File 15 should be grouped into topic 4, file 8 should be grouped into topic 5. File 23 was one of the harder to group. The model had it sitting in topic 5 but this doesn't seem suitable - this file will require further review before settling on a topic as it appears to span multiple topics equally and none of them conclusively. As per Figure 2 above we can see that the key terms in the document are *coal, seam, mines, mechanised* which tends to indicate a unique set of terms according to Zipf's law relative to other documents.
 
 ## Evaluation
 
@@ -104,7 +104,7 @@ The analysis conducted on the *mystery* files has revealed 6 different topics ac
 
 ## Next Steps
 
-Following this analysis the way forward would be to create 6 different files using terms from the six different topics as a labelling convention, suggested files names and the contents of each file are in Annex A.
+Following this analysis the way forward would be to create 6 different files using terms from the six different topics as a labelling convention, suggested files names and the contents of each file are in Annex A. A list of suggested file names is at Annex B.
 
 ## Future Opportunities
 
@@ -114,7 +114,7 @@ Future work opportunities could be to conduct sentiment analysis on our own revi
 
 \newpage
 
-# Annex A - Suggested File Groupings
+## Annex A - Suggested File Groupings
 
 |document  |     gamma|
 |:---------|---------:|
@@ -198,8 +198,58 @@ Table: Topic 6 contents and confidence levels
 Suggested folder name is: RISK_MODEL_PROJECT
 
 \newpage
+## Annex B - Suggested file names
 
-# References
+These names were generated from the terms that are a product of the top five terms from each file as a product of Zipf's Law.
+
+|doc_id    |file_name_sug                                                           |
+|:---------|:-----------------------------------------------------------------------|
+|Doc01.txt |holt_psychoanalysis_risk_risks_fortune_Doc01.txt                        |
+|Doc02.txt |erm_appetite_risk_controls_risks_Doc02.txt                              |
+|Doc03.txt |risk_risks_historical_pitfalls_module_Doc03.txt                         |
+|Doc04.txt |elephant_elephants_elephants_dead_pachyderms_Doc04.txt                  |
+|Doc05.txt |schedule_signs_percent_trouble_ewss_Doc05.txt                           |
+|Doc06.txt |social_risks_risk_stakeholders_construct_Doc06.txt                      |
+|Doc07.txt |strategic_risks_authors_deliverable_operational_Doc07.txt               |
+|Doc08.txt |hubbard_risk_analysts_models_risks_Doc08.txt                            |
+|Doc09.txt |risk_risks_authors_interviewee_management_Doc09.txt                     |
+|Doc10.txt |scoring_matrices_risk_methods_hubbard_Doc10.txt                         |
+|Doc11.txt |ibis_glyma_maps_students_video_Doc11.txt                                |
+|Doc12.txt |ibis_nodes_decision_mapping_compendium_Doc12.txt                        |
+|Doc13.txt |map_rohan_sleep_bed_movie_Doc13.txt                                     |
+|Doc14.txt |mary_jack_andrew_max_rick_Doc14.txt                                     |
+|Doc15.txt |informal_knowledge_capture_ibis_conklin_Doc15.txt                       |
+|Doc16.txt |ibis_map_dialogue_mapping_complexity_Doc16.txt                          |
+|Doc17.txt |infrastructural_carr_map_carrs_stage_Doc17.txt                          |
+|Doc18.txt |machine_data_learning_fit_model_Doc18.txt                               |
+|Doc19.txt |corpus_text_wordcloud_freqr_dtm_Doc19.txt                               |
+|Doc20.txt |cluster_clustering_clusters_documents_corpus_tmmap_Doc20.txt            |
+|Doc21.txt |topic_lda_topics_tmmap_document_Doc21.txt                               |
+|Doc22.txt |gephi_graph_similarity_document_tmmap_Doc22.txt                         |
+|Doc23.txt |mechanised_mines_seam_shifts_coal_Doc23.txt                             |
+|Doc24.txt |scapegoat_author_active_errors_error_Doc24.txt                          |
+|Doc25.txt |willmott_alvesson_critical_employees_lifeworld_Doc25.txt                |
+|Doc26.txt |stupidity_functional_employees_spicer_alvesson_Doc26.txt                |
+|Doc27.txt |effects_planned_change_side_improvisations_reforms_unintended_Doc27.txt |
+|Doc28.txt |success_npd_leadership_culture_product_variables_Doc28.txt              |
+|Doc29.txt |bureaucratic_buzzbank_hodgson_creative_employees_Doc29.txt              |
+|Doc30.txt |sharing_knowledge_creation_model_isd_jackson_klobas_Doc30.txt           |
+|Doc31.txt |design_conway_paths_communication_subsystems_Doc31.txt                  |
+|Doc32.txt |grabher_projects_military_hosting_institutions_Doc32.txt                |
+|Doc33.txt |practices_cerrits_wareham_recipient_practice_Doc33.txt                  |
+|Doc34.txt |validity_john_claims_habermas_speaker_Doc34.txt                         |
+|Doc35.txt |completion_days_ml_max_probability_Doc35.txt                            |
+|Doc36.txt |dartboard_hits_theta_centre_demo_Doc36.txt                              |
+|Doc37.txt |dart_circle_square__throws_Doc37.txt                                    |
+|Doc38.txt |leq_risk_probability_hrs_task_Doc38.txt                                 |
+|Doc39.txt |correlated_uncorrelated_correlation_coefficient_duration_Doc39.txt      |
+|Doc40.txt |completion_hrs_tasks_task_distribution_Doc40.txt                        |
+|Doc41.txt |ml_max_simulation_distribution_triangular_Doc41.txt                     |
+|Doc42.txt |boundary_margin_svm_dataset_svmmodel_Doc42.txt                          |
+
+\newpage
+
+## References
 
 [^e1f3]: This is inclusive of numbers and special characters for an initial assessment. Sentences have been assessed in accordance with unicode sentence boundaries. [@UAX29Unicode]
 
